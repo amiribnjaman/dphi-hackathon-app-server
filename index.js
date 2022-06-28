@@ -29,7 +29,16 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
             const data = await challengeCollection.find(query);
             const result = await data.toArray()
             return res.send(result)
-            
+        })
+
+        // Search api
+        app.get('/challenge/search', async (req, res) => {
+            const query = req.query
+            const queryData= query.challenge_name
+            const getData = await challengeCollection.find({})
+            const getResult = await getData.toArray()
+            const filtered = getResult.filter((data)=> data.challenge_name.toLowerCase().includes(queryData.toLowerCase()))
+            return res.send(filtered)
         })
 
         // Get filter challenges api
@@ -54,7 +63,25 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
                 const data = await challengeCollection.find(filter);
                 const result = await data.toArray()
                 return res.send(result)
-            } else {
+            } if (query.easy) {
+                const filter = ({ level: 'easy' })
+                const data = await challengeCollection.find(filter);
+                const result = await data.toArray()
+                return res.send(result)
+            } 
+            if (query.medium) {
+                const filter = ({ level: 'medium' })
+                const data = await challengeCollection.find(filter);
+                const result = await data.toArray()
+                return res.send(result)
+            } 
+            if (query.hard) {
+                const filter = ({ level: 'hard' })
+                const data = await challengeCollection.find(filter);
+                const result = await data.toArray()
+                return res.send(result)
+            } 
+            else {
                 const data = await challengeCollection.find({});
                 const result = await data.toArray()
                 return res.send(result)
@@ -74,7 +101,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
         app.put('/challenge/:id', async (req, res) => {
             const id = req.params.id
             const data = req.body
-            console.log(id, data)
+            // console.log(id, data)
             const query = { _id: ObjectId(id) }
             const options = { upsert: true };
             const updateDoc = {
